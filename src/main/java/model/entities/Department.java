@@ -2,7 +2,8 @@ package model.entities;
 
 import java.util.Objects;
 
-public class Department implements java.io.Serializable {
+public class Department
+        implements java.io.Serializable {
 
     private Integer id;
     private String name;
