@@ -31,6 +31,22 @@ public class Program2 {
             departmentDao.findAll().forEach(System.out::println);
 
 
+            /**
+            System.out.println("== Teste 4: Delete ==");
+            System.out.println("Digite o id do departamento a ser deletado:");
+            int id = sc.nextInt();
+            departmentDao.deleteById(id);
+             **/
+
+            System.out.println("== Teste 5: update ==");
+            System.out.println("Digite o id do departamento a ser atualizado:");
+            int newId = sc.nextInt();
+            System.out.println("Digite o novo nome do departamento:");
+            String newName = sc.next();
+            Department departmentUpdate = new Department(newId, newName);
+            departmentDao.update(departmentUpdate);
+            System.out.println("Atualizado: "+departmentDao.findById(newId));
+
             sc.close();
         }   catch (Exception e) {
             e.printStackTrace();

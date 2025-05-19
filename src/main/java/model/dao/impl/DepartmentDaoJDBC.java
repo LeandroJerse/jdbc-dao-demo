@@ -1,6 +1,7 @@
 package model.dao.impl;
 
 import db.DB;
+import db.DbException;
 import model.dao.DepartmentDao;
 import model.entities.Department;
 
@@ -45,6 +46,15 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
     @Override
     public void update(Department department) {
+        PreparedStatement stmt = null;
+        try{
+            stmt = con.prepareStatement("UPDATE department SET Name = ? WHERE Id = ?");
+            stmt.setString(1, department.getName());
+            stmt.setInt(2, department.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
 
     }
 
