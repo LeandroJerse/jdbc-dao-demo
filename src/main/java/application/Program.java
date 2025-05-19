@@ -28,6 +28,11 @@ public class Program {
             sellers = sellerDao.findAll();
             sellers.forEach(System.out::println);
 
+            System.out.println("=== Teste 4: Seller insert ===");
+            Seller newseller = new Seller(null,"Greg", "greg@greg", new Date(),4000.00,department);
+            sellerDao.insert(newseller);
+            System.out.println("Inserted new Id = " + newseller.getId());
+
         }
         catch (Exception e){
             e.printStackTrace();
