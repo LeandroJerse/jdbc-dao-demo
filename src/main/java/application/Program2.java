@@ -17,6 +17,7 @@ public class Program2 {
             Department department = departmentDao.findById(1);
             System.out.println(department);
 
+            /**
             System.out.println("== Teste 2: insert ==");
             System.out.println("Digite o nome do departamento:");
             String name = sc.nextLine();
@@ -24,8 +25,10 @@ public class Program2 {
             departmentDao.insert(department);
             System.out.println("Departamento armagenado no computador: "+department+"\n" +
                     "departamento no banco de dados: "+departmentDao.findById(department.getId())+"\n");
+             **/
 
-
+            System.out.println("== Teste 3: findALL ==");
+            departmentDao.findAll().forEach(System.out::println);
 
 
             sc.close();

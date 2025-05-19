@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DepartmentDaoJDBC implements DepartmentDao {
@@ -49,6 +50,15 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
     @Override
     public void deleteById(Integer id) {
+        PreparedStatement stmt = null;
+        try{
+            stmt = con.prepareStatement("DELETE FROM department WHERE department.Id = ?");
+            stmt.setInt(1,id);
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0){
+                System.out.println("Nenhum departamento foi deletado");
+            }
+        } catch (SQLException e) {}
 
     }
 
@@ -64,6 +74,29 @@ public class DepartmentDaoJDBC implements DepartmentDao {
                 return new Department(rs.getInt("Id"),rs.getString("Name"));
             }
             return null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            DB.closeStatement(stmt);
+        }
+
+    }
+
+    @Override
+    public List<Department> findAll() {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try{
+            stmt = con.prepareStatement("SELECT * FROM department");
+
+            List<Department> departments = new ArrayList<>();
+            rs = stmt.executeQuery();
+            while (rs.next()){
+                departments.add(new Department(rs.getInt("Id"),rs.getString("Name")));
+            }
+            return departments;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
