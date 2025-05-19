@@ -33,6 +33,13 @@ public class Program {
             sellerDao.insert(newseller);
             System.out.println("Inserted new Id = " + newseller.getId());
 
+            System.out.println("=== Teste 5: Seller update ===");
+
+            seller = sellerDao.findById(1);
+            seller.setName("Marta Jhones");
+            sellerDao.update(seller);
+            System.out.println("Updated seller = " + seller + "\nUtilizando Dao\t" + sellerDao.findById(1));
+
         }
         catch (Exception e){
             e.printStackTrace();
