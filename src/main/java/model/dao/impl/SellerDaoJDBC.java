@@ -10,7 +10,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SellerDaoJDBC implements SellerDao {
 
@@ -46,11 +49,8 @@ public class SellerDaoJDBC implements SellerDao {
             rs = stmt.executeQuery();
 
             if (rs.next()){
-                Department department = new Department(rs.getInt("DepartmentId"), rs.getString("DepName"));
-                Seller seller = new Seller(rs.getInt("Id"),rs.getString("Name"),
-                        rs.getString("Email"),rs.getDate("BirthDate"),
-                        rs.getDouble("BaseSalary"),department);
-                return seller;
+                Department department = instanciateDepartment(rs);
+                return instanceSeller(rs, department);
 
             }
             return null;
@@ -63,7 +63,56 @@ public class SellerDaoJDBC implements SellerDao {
             DB.closeResultSet(rs);
 
         }
+    }
 
+    public List<Seller> findAllByDepartment(Department department) {
+
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            stmt = connection.prepareStatement("SELECT seller.*,department.Name as DepName FROM seller "+
+                    "INNER JOIN department ON seller.DepartmentId = department.Id WHERE DepartmentId = ? "+
+                    "ORDER BY Name");
+            stmt.setInt(1, department.getId());
+            rs = stmt.executeQuery();
+
+            List<Seller> sellers = new ArrayList<>();
+            Map<Integer, Department> departments = new HashMap<>();
+
+            while (rs.next()){
+
+
+                Department dep = departments.get(rs.getInt("DepartmentId"));
+                if (dep == null){
+                    dep = instanciateDepartment(rs);
+                    departments.put(rs.getInt("DepartmentId"), dep);
+                }
+
+
+                Seller seller = instanceSeller(rs,dep);
+                sellers.add(seller);
+
+            }
+            return sellers;
+        }
+        catch (SQLException e){
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeStatement(stmt);
+            DB.closeResultSet(rs);
+        }
+    }
+
+    private Seller instanceSeller(ResultSet rs, Department department) throws SQLException {
+        return new Seller(rs.getInt("Id"),rs.getString("Name"),
+                rs.getString("Email"),rs.getDate("BirthDate"),
+                rs.getDouble("BaseSalary"),department);
+    }
+
+    private Department instanciateDepartment(ResultSet rs) throws SQLException {
+        Department department = new Department(rs.getInt("DepartmentId"), rs.getString("DepName"));
+    return department;
     }
 
     @Override
