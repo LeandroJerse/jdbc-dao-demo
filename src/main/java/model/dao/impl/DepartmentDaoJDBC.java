@@ -19,6 +19,26 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
     @Override
     public void insert(Department department) {
+        PreparedStatement stmt = null;
+        try{
+            stmt = con.prepareStatement("INSERT INTO department (Name) VALUES (?)",
+                    PreparedStatement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, department.getName());
+            int rowsAffected =  stmt.executeUpdate();
+            if (rowsAffected > 0){
+                ResultSet generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()){
+                    department.setId(generatedKeys.getInt(1));
+                    DB.closeResultSet(generatedKeys);
+                }
+                else{
+                    throw new RuntimeException("Erro ao inserir o departamento no banco de dados");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        finally {}
 
     }
 
@@ -54,9 +74,4 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
     }
 
-    @Override
-    public List<Department> findAll() {
-        return null;
-
-    }
 }
